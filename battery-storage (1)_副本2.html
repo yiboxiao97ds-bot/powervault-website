@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PowerVault — 家用储能系统</title>
+<style>
+:root{--bg:#0a0c0f;--surface:#111318;--surface2:#181c23;--border:rgba(255,255,255,0.07);--accent:#00e5a0;--accent2:#0066ff;--text:#f0f2f5;--muted:#6b7280;--warn:#f59e0b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Noto Sans SC',sans-serif;line-height:1.6;overflow-x:hidden;}
+nav{position:sticky;top:0;background:rgba(10,12,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:62px;z-index:100;}
+.nav-logo{font-size:20px;font-weight:700;letter-spacing:-0.5px;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color 0.2s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{background:var(--accent);color:#000;border:none;padding:8px 20px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+.nav-cta:hover{opacity:0.85;}
+.hero{padding:80px 5% 64px;position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,160,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,0.04) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%);}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.3);color:var(--accent);padding:5px 12px;border-radius:100px;font-size:11px;font-weight:500;margin-bottom:20px;}
+.hero-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+h1{font-size:clamp(38px,5vw,62px);font-weight:700;line-height:1.08;letter-spacing:-2px;margin-bottom:18px;position:relative;}
+h1 .hl{color:var(--accent);}
+.hero-desc{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:32px;position:relative;}
+.btn-p{background:var(--accent);color:#000;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-right:12px;transition:opacity 0.2s;text-decoration:none;display:inline-block;}
+.btn-p:hover{opacity:0.85;}
+.btn-o{background:transparent;color:var(--text);padding:13px 28px;border-radius:8px;font-size:14px;text-decoration:none;border:1px solid var(--border);display:inline-block;transition:all 0.2s;}
+.btn-o:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04);}
+.bat-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;position:relative;overflow:hidden;}
+.bat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.bat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;}
+.bat-model{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.bat-name{font-size:18px;font-weight:600;}
+.bat-status{background:rgba(0,229,160,0.1);color:var(--accent);padding:4px 10px;border-radius:100px;font-size:11px;font-weight:500;}
+.charge-row{display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px;color:var(--muted);}
+.charge-pct{font-size:26px;font-weight:700;color:var(--accent);}
+.cbar{height:8px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;margin-bottom:20px;}
+.cfill{height:100%;width:78%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:100px;animation:canim 3s ease-in-out infinite alternate;}
+@keyframes canim{from{width:72%}to{width:82%}}
+.bat-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.bstat{background:var(--surface2);border-radius:9px;padding:13px;}
+.bstat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
+.bstat-v{font-size:19px;font-weight:600;}
+.bstat-u{font-size:11px;color:var(--muted);margin-left:1px;}
+.metrics{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);padding:36px 5%;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.metric{text-align:center;}
+.metric-val{font-size:38px;font-weight:700;line-height:1;margin-bottom:5px;}
+.metric-val.g{color:var(--accent);}.metric-val.b{color:var(--accent2);}.metric-val.a{color:var(--warn);}
+.metric-label{font-size:12px;color:var(--muted);}
+section{padding:76px 5%;}
+.stag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:12px;}
+h2{font-size:clamp(26px,4vw,40px);font-weight:700;letter-spacing:-1px;line-height:1.15;margin-bottom:13px;}
+.ssub{font-size:15px;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:52px;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;transition:border-color 0.3s,transform 0.3s;}
+.feat:hover{border-color:rgba(0,229,160,0.3);transform:translateY(-3px);}
+.feat-icon{width:46px;height:46px;background:rgba(0,229,160,0.1);border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:21px;}
+.feat h3{font-size:16px;font-weight:600;margin-bottom:8px;}
+.feat p{font-size:13px;color:var(--muted);line-height:1.7;}
+.scenarios-bg{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.sc{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:28px;}
+.sc-icon{font-size:28px;margin-bottom:14px;display:block;}
+.sc h3{font-size:17px;font-weight:600;margin-bottom:7px;}
+.sc p{font-size:13px;color:var(--muted);line-height:1.7;}
+.sc-save{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--accent);font-weight:500;}
+.contact-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.cc{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;}
+.cc-icon{font-size:32px;margin-bottom:12px;}
+.cc-type{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.cc-val{font-size:16px;font-weight:700;}
+.cc-val.g{color:var(--accent);}.cc-val.b{color:var(--accent2);}
+.cta-sec{text-align:center;padding:88px 5%;}
+.cta-sec h2{margin-bottom:16px;}
+.cta-sec p{color:var(--muted);max-width:440px;margin:0 auto 36px;font-size:16px;}
+footer{border-top:1px solid var(--border);padding:32px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.fl{font-weight:700;font-size:18px;}.fl span{color:var(--accent);}
+.flinks{display:flex;gap:24px;list-style:none;}
+.flinks a{font-size:13px;color:var(--muted);text-decoration:none;}
+footer small{font-size:11px;color:var(--muted);}
+@media(max-width:800px){.hero{grid-template-columns:1fr;}.bat-card{display:none;}.feat-grid,.sc-grid,.contact-grid{grid-template-columns:1fr;}.metrics{grid-template-columns:repeat(2,1fr);}nav .nav-links{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">Power<span>Vault</span></div>
+  <ul class="nav-links">
+    <li><a href="#features">功能特性</a></li>
+    <li><a href="#scenarios">应用场景</a></li>
+    <li><a href="#contact">联系我们</a></li>
+  </ul>
+  <a class="nav-cta" href="https://docs.qq.com/form/page/DVmx0V1VTVEVjUWtv">立即咨询</a>
+</nav>
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div style="position:relative">
+    <div class="hero-badge">全新第三代磷酸铁锂电芯</div>
+    <h1>智能储能，<br><span class="hl">掌控能源</span><br>自由用电</h1>
+    <p class="hero-desc">PowerVault 家用储能系统，峰谷套利、光伏并储、断电备用三合一。一块电池，让您的家庭能源自主自立。</p>
+    <a class="btn-p" href="https://docs.qq.com/form/page/DVmx0V1VTVEVjUWtv">免费获取方案</a>
+    <a href="#contact" class="btn-o">联系我们</a>
+  </div>
+  <div class="bat-card">
+    <div class="bat-header">
+      <div><div class="bat-model">PowerVault Pro</div><div class="bat-name">10 kWh 储能柜</div></div>
+      <span class="bat-status">充电中</span>
+    </div>
+    <div class="charge-row"><span>剩余电量</span><span class="charge-pct">78%</span></div>
+    <div class="cbar"><div class="cfill"></div></div>
+    <div class="bat-stats">
+      <div class="bstat"><div class="bstat-l">当前功率</div><div class="bstat-v">3.2<span class="bstat-u">kW</span></div></div>
+      <div class="bstat"><div class="bstat-l">今日节省</div><div class="bstat-v" style="color:var(--accent)">12.4<span class="bstat-u">元</span></div></div>
+      <div class="bstat"><div class="bstat-l">循环寿命</div><div class="bstat-v">6000<span class="bstat-u">次</span></div></div>
+      <div class="bstat"><div class="bstat-l">系统效率</div><div class="bstat-v">97<span class="bstat-u">%</span></div></div>
+    </div>
+  </div>
+</div>
+<div class="metrics">
+  <div class="metric"><div class="metric-val g">10+</div><div class="metric-label">可用容量（kWh）</div></div>
+  <div class="metric"><div class="metric-val b">6000</div><div class="metric-label">循环寿命（次）</div></div>
+  <div class="metric"><div class="metric-val a">15</div><div class="metric-label">质保年限（年）</div></div>
+  <div class="metric"><div class="metric-val g">97%</div><div class="metric-label">系统综合效率</div></div>
+</div>
+<section id="features">
+  <div class="stag">核心优势</div>
+  <h2>为什么选择 PowerVault？</h2>
+  <p class="ssub">采用磷酸铁锂电芯，安全性能卓越，结合自研 BMS 管理系统，打造极致能源体验。</p>
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-icon">⚡</div><h3>峰谷套利</h3><p>夜间低谷时段充电，白天高峰时段放电，每度电差价收益直接到账，年均节省电费超万元。</p></div>
+    <div class="feat"><div class="feat-icon">☀️</div><h3>光储一体</h3><p>与光伏系统无缝集成，MPPT 最优追踪，多余太阳能不再浪费，真正实现能源自给自足。</p></div>
+    <div class="feat"><div class="feat-icon">🛡️</div><h3>断电备用</h3><p>电网停电时毫秒级切换至离网模式，保障家中冰箱、路由器、照明持续运行，不受停电影响。</p></div>
+    <div class="feat"><div class="feat-icon">📱</div><h3>智能管控</h3><p>手机 App 实时监控充放电状态、电量曲线、节费数据，一键调节工作模式，随时随地掌控能源。</p></div>
+    <div class="feat"><div class="feat-icon">🔒</div><h3>安全至上</h3><p>磷酸铁锂电芯不起火不爆炸，多重 BMS 保护，通过 UL、IEC、GB 国际安全认证，放心安装室内。</p></div>
+    <div class="feat"><div class="feat-icon">🔧</div><h3>模块扩容</h3><p>模块化设计，初始装 5 kWh，随时按需叠加，最大扩至 50 kWh，一次投资长期受益。</p></div>
+  </div>
+</section>
+<section id="scenarios" class="scenarios-bg">
+  <div class="stag">应用场景</div>
+  <h2>您家的能源，每一刻都有价值</h2>
+  <p class="ssub">无论您的家庭用电需求如何，PowerVault 都能找到最优的能源解决方案。</p>
+  <div class="sc-grid">
+    <div class="sc"><span class="sc-icon">📈</span><h3>峰谷套利 · 省钱模式</h3><p>程序自动在夜间谷电（0.3元/度）充电，白天高峰（1.2元/度）放电，每天自动套利。</p><div class="sc-save">预估年节省：约 3,000 — 6,000 元</div></div>
+    <div class="sc"><span class="sc-icon">🏠</span><h3>应急备电 · 安心模式</h3><p>台风停电、线路检修？毫秒级切换，灯光、冰箱、医疗设备正常运行，一夜无忧。</p><div class="sc-save" style="color:var(--accent2)">最长可备用：约 12 — 20 小时</div></div>
+    <div class="sc"><span class="sc-icon">☀️</span><h3>光储并用 · 自给模式</h3><p>搭配屋顶光伏，白天太阳能先用，多余充进电池，晚上从电池取用，对电网依赖降至最低。</p><div class="sc-save" style="color:var(--warn)">光伏自用率可提升：50% → 95%</div></div>
+    <div class="sc"><span class="sc-icon">🚗</span><h3>电动汽车 · 绿色充电</h3><p>夜间谷电充满储能柜，白天随时为电动车补能，相当于在家拥有一座便宜的私人充电桩。</p><div class="sc-save" style="color:#e879f9">每公里充电成本降低：约 70%</div></div>
+  </div>
+</section>
+<section id="contact" class="contact-section">
+  <div class="stag">联系我们</div>
+  <h2>获取专属方案</h2>
+  <p class="ssub">专业顾问为您提供免费上门勘察与定制方案，多种方式随时联系。</p>
+  <div class="contact-grid">
+    <div class="cc"><div class="cc-icon">📞</div><div class="cc-type">手机 / 电话</div><div class="cc-val b">158-2857-8465</div></div>
+    <div class="cc"><div class="cc-icon">💬</div><div class="cc-type">微信同号</div><div class="cc-val g">15828578465</div></div>
+    <div class="cc"><div class="cc-icon">📧</div><div class="cc-type">邮件咨询</div><div class="cc-val"><a href="mailto:760659558@qq.com" style="color:var(--accent);text-decoration:none">760659558@qq.com</a></div></div>
+  </div>
+</section>
+<div class="cta-sec">
+  <div class="stag" style="display:inline-block">开始储能之旅</div>
+  <h2>立即获取专属方案</h2>
+  <p>填写需求，专业能源顾问将在 24 小时内联系您，提供免费上门勘察和定制方案。</p>
+  <a class="btn-p" href="https://docs.qq.com/form/page/DVmx0V1VTVEVjUWtv">免费获取方案</a>
+</div>
+<footer>
+  <div class="fl">Power<span>Vault</span></div>
+  <ul class="flinks"><li><a href="#">产品中心</a></li><li><a href="#">技术支持</a></li><li><a href="#">关于我们</a></li></ul>
+  <small>© 2025 PowerVault 储能科技. 保留所有权利.</small>
+</footer>
+</body>
+</html>
